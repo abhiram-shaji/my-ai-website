@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Head from "next/head";
 
 export default function PersonalizedPage() {
   const { id } = useParams() as { id: string }; // Ensure id is a string
@@ -23,11 +24,11 @@ export default function PersonalizedPage() {
 
       const result = await response.json();
 
-      // Ensure we have fallback values
+      // ✅ Remove "Headline:" and "Description:" from API response
       setData({
-        title: result.title || "Error generating title.",
-        headline: result.headline || "Error generating headline.",
-        description: result.description || "Error generating description.",
+        title: result.title?.replace(/^Website Title:\s*/, "") || "Error generating title.",
+        headline: result.headline?.replace(/^Headline:\s*/, "") || "Error generating headline.",
+        description: result.description?.replace(/^Description:\s*/, "") || "Error generating description.",
         image: result.image || "https://via.placeholder.com/600x400.png?text=Error+Fetching+Image",
       });
 
@@ -38,26 +39,39 @@ export default function PersonalizedPage() {
   }, [id]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <Card className="w-full max-w-2xl shadow-lg">
-        <div className="p-6 flex flex-col items-center">
-          {loading ? (
-            <h1 className="text-xl font-bold">Generating Content...</h1>
-          ) : data ? (
-            <>
-              <h1 className="text-2xl font-bold">{data.title}</h1>
-              <p className="text-lg font-semibold text-gray-700">{data.headline}</p>
-              <p className="mt-2 text-gray-500">{data.description}</p>
-              <img src={data.image} alt={id} className="mt-4 w-full max-w-md rounded-lg shadow" />
-              <Button className="mt-4" onClick={() => window.location.href = "/personalized"}>
-                Generate New
-              </Button>
-            </>
-          ) : (
-            <h1 className="text-xl font-bold">No Data Found</h1>
-          )}
-        </div>
-      </Card>
-    </div>
+    <>
+      {/* ✅ Set Tab Title */}
+      <Head>
+        <title>{data?.title || "Loading..."}</title>
+      </Head>
+
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+        <Card className="w-full max-w-2xl shadow-lg">
+          <div className="p-6 flex flex-col items-center">
+            {loading ? (
+              <h1 className="text-xl font-bold">Generating Content...</h1>
+            ) : data ? (
+              <>
+                {/* ✅ Headline as h1 (No "Headline:" prefix) */}
+                <h1 className="text-2xl font-bold text-blue-600">{data.headline}</h1>
+
+                {/* ✅ Description (No "Description:" prefix) */}
+                <p className="mt-2 text-gray-600">{data.description}</p>
+
+                {/* ✅ Image */}
+                <img src={data.image} alt={id} className="mt-4 w-full max-w-md rounded-lg shadow" />
+
+                {/* ✅ Generate New Button */}
+                <Button className="mt-4" onClick={() => window.location.href = "/personalized"}>
+                  Generate New
+                </Button>
+              </>
+            ) : (
+              <h1 className="text-xl font-bold">No Data Found</h1>
+            )}
+          </div>
+        </Card>
+      </div>
+    </>
   );
 }
