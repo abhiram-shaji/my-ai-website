@@ -1,0 +1,19 @@
+[
+    {
+      "id": "1",
+      "platform": "Google",
+      "headline": "Boost Your Sales with AI-Powered Marketing!",
+      "description": "Our AI-driven ad solutions help businesses increase conversions by 50%. Try now!",
+      "image": "https://via.placeholder.com/300",
+      "url": "https://example.com"
+    },
+    {
+      "id": "2",
+      "platform": "Meta",
+      "headline": "Reach More Customers on Facebook & Instagram!",
+      "description": "Leverage Meta Ads to grow your audience and maximize your ROI.",
+      "image": "https://via.placeholder.com/300",
+      "url": "https://example.com"
+    }
+  ]
+  
