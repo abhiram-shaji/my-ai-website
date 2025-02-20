@@ -1,27 +1,38 @@
-import { NextResponse } from "next/server";
-import { generateAdContent } from "@/lib/generateContent";
+import { ApolloServer } from "@apollo/server";
+import { startServerAndCreateNextHandler } from "@as-integrations/next";
+import { NextRequest } from "next/server";
+import { gql } from "graphql-tag";
+import ads from "@/data/ads.json"; // Import mock ad data
 
-/**
- * API route to generate AI-powered ad content.
- * Accepts POST requests with `platform` and `product` in JSON body.
- */
-export async function POST(req: Request) {
-  try {
-    // Parse incoming request data
-    const { platform, product } = await req.json();
-
-    // Validate input
-    if (!platform || !product) {
-      return NextResponse.json({ error: "Platform and product are required." }, { status: 400 });
-    }
-
-    // Generate AI-powered ad content
-    const adContent = await generateAdContent(platform, product);
-
-    // Return response
-    return NextResponse.json({ adContent });
-  } catch (error) {
-    console.error("Error generating ad content:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+// Define GraphQL schema
+const typeDefs = gql`
+  type Ad {
+    id: ID!
+    platform: String!
+    headline: String!
+    description: String!
+    image: String!
+    url: String!
   }
-}
+
+  type Query {
+    ads: [Ad!]!
+    ad(id: ID!): Ad
+  }
+`;
+
+// Define resolvers
+const resolvers = {
+  Query: {
+    ads: () => ads,
+    ad: (_parent: any, args: { id: string }) => ads.find((ad) => ad.id === args.id),
+  },
+};
+
+// Create Apollo Server
+const server = new ApolloServer({ typeDefs, resolvers });
+
+// Correct function to handle API routes in App Router
+const handler = startServerAndCreateNextHandler<NextRequest>(server);
+
+export { handler as GET, handler as POST };
