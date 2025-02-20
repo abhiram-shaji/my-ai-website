@@ -32,7 +32,14 @@ const resolvers = {
 // Create Apollo Server
 const server = new ApolloServer({ typeDefs, resolvers });
 
-// Correct function to handle API routes in App Router
+// ✅ Fix: Correctly handle Next.js App Router API Routes
 const handler = startServerAndCreateNextHandler<NextRequest>(server);
 
-export { handler as GET, handler as POST };
+// ✅ Explicitly define API routes with required `RouteContext`
+export async function GET(req: NextRequest, ctx: { params: unknown }) {
+  return handler(req);
+}
+
+export async function POST(req: NextRequest, ctx: { params: unknown }) {
+  return handler(req);
+}
