@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { generateAdContent } from "@/lib/generateContent";
+import { generateWebsiteContent } from "@/lib/generateContent";
 
 export async function POST(req: Request) {
   try {
@@ -9,10 +9,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Platform and product are required." }, { status: 400 });
     }
 
-    const { adText, imageUrl } = await generateAdContent(platform, product);
-    return NextResponse.json({ adContent: adText, image: imageUrl });
+    const { title, headline, description, imageUrl } = await generateWebsiteContent(platform, product);
+    return NextResponse.json({ title, headline, description, image: imageUrl });
   } catch (error) {
-    console.error("Error generating ad content:", error);
+    console.error("Error generating website content:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
