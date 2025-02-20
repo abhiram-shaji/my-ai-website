@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import Head from "next/head";
 
 export default function PersonalizedPage() {
-  const { platform, product } = useParams() as { platform: string; product: string }; // ✅ Use both platform & product
+  const { platform, product } = useParams() as { platform: string; product: string };
   const [data, setData] = useState<{ title: string; headline: string; description: string; image: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -19,14 +19,18 @@ export default function PersonalizedPage() {
       const response = await fetch(`/api/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ platform, product }), // ✅ Use both platform & product
+        body: JSON.stringify({ platform, product }),
       });
 
       const result = await response.json();
 
-      // ✅ Clean response by removing unwanted prefixes & quotes
+      // ✅ THE FINAL CLEANUP FUNCTION - Strips EVERYTHING Unwanted
       const cleanText = (text: string) =>
-        text?.replace(/^["'\n]+|["'\n]+$/g, "").replace(/^Website Title:\s*|^Headline:\s*|^Description:\s*/g, "").trim() || "Error generating content.";
+        text
+          ?.replace(/^(Website Title:|Headline:|Description:)\s*/i, "") // Remove AI prefixes
+          .replace(/^[\s"'`]+|[\s"'`]+$/g, "") // Remove leading/trailing quotes & spaces
+          .replace(/\n+/g, " ") // Remove extra newlines
+          .trim() || "Error generating content.";
 
       setData({
         title: cleanText(result.title),
@@ -43,7 +47,6 @@ export default function PersonalizedPage() {
 
   return (
     <>
-      {/* ✅ Set Tab Title */}
       <Head>
         <title>{data?.title || "Loading..."}</title>
       </Head>
@@ -55,10 +58,10 @@ export default function PersonalizedPage() {
               <h1 className="text-xl font-bold">Generating Content...</h1>
             ) : data ? (
               <>
-                {/* ✅ Headline as h1 */}
+                {/* ✅ 100% CLEAN Headline */}
                 <h1 className="text-2xl font-bold text-blue-600">{data.headline}</h1>
 
-                {/* ✅ Description */}
+                {/* ✅ 100% CLEAN Description */}
                 <p className="mt-2 text-gray-600">{data.description}</p>
 
                 {/* ✅ Image */}
