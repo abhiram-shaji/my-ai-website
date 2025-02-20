@@ -1,21 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // ✅ Import useRouter for navigation
+import { useRouter } from "next/navigation"; // ✅ Import router for navigation
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export default function PersonalizedPage() {
-  const [platform, setPlatform] = useState("Google");
-  const [product, setProduct] = useState("AI Marketing Tool");
-  const router = useRouter(); // ✅ Initialize Next.js router
+export default function HomePage() {
+  const [platform, setPlatform] = useState(""); // ✅ User-input platform
+  const [product, setProduct] = useState(""); // ✅ User-input product
+  const router = useRouter();
 
-  // ✅ Function to navigate to the dynamic page using user input
+  // ✅ Redirects to `/personalized/:platform/:product`
   const handleGenerate = () => {
-    if (!product.trim()) return; // Prevent empty product input
-    const encodedProduct = encodeURIComponent(product); // Encode URL properly
-    router.push(`/personalized/${encodedProduct}`); // Redirect user
+    if (!platform.trim() || !product.trim()) return; // Prevent empty inputs
+    const encodedPlatform = encodeURIComponent(platform);
+    const encodedProduct = encodeURIComponent(product);
+    router.push(`/personalized/${encodedPlatform}/${encodedProduct}`); // ✅ Navigate to dynamic page
   };
 
   return (
@@ -26,18 +27,17 @@ export default function PersonalizedPage() {
 
           <div className="flex gap-2 w-full">
             <Input
-              placeholder="Platform (e.g., Google)"
+              placeholder="Platform (e.g., Google, Facebook, LinkedIn)"
               value={platform}
               onChange={(e) => setPlatform(e.target.value)}
             />
             <Input
-              placeholder="Product (e.g., AI Tool)"
+              placeholder="Product (e.g., AI Marketing Tool)"
               value={product}
               onChange={(e) => setProduct(e.target.value)}
             />
           </div>
 
-          {/* ✅ Redirect to Dynamic Page */}
           <Button className="mt-4 w-full" onClick={handleGenerate}>
             Generate
           </Button>

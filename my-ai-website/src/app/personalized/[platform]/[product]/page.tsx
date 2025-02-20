@@ -7,28 +7,31 @@ import { Button } from "@/components/ui/button";
 import Head from "next/head";
 
 export default function PersonalizedPage() {
-  const { id } = useParams() as { id: string }; // Ensure id is a string
+  const { platform, product } = useParams() as { platform: string; product: string }; // ✅ Use both platform & product
   const [data, setData] = useState<{ title: string; headline: string; description: string; image: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) return;
+    if (!platform || !product) return;
 
     const fetchWebsiteContent = async () => {
       setLoading(true);
       const response = await fetch(`/api/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ platform: "Google", product: id }),
+        body: JSON.stringify({ platform, product }), // ✅ Use both platform & product
       });
 
       const result = await response.json();
 
-      // ✅ Remove "Headline:" and "Description:" from API response
+      // ✅ Clean response by removing unwanted prefixes & quotes
+      const cleanText = (text: string) =>
+        text?.replace(/^["'\n]+|["'\n]+$/g, "").replace(/^Website Title:\s*|^Headline:\s*|^Description:\s*/g, "").trim() || "Error generating content.";
+
       setData({
-        title: result.title?.replace(/^Website Title:\s*/, "") || "Error generating title.",
-        headline: result.headline?.replace(/^Headline:\s*/, "") || "Error generating headline.",
-        description: result.description?.replace(/^Description:\s*/, "") || "Error generating description.",
+        title: cleanText(result.title),
+        headline: cleanText(result.headline),
+        description: cleanText(result.description),
         image: result.image || "https://via.placeholder.com/600x400.png?text=Error+Fetching+Image",
       });
 
@@ -36,7 +39,7 @@ export default function PersonalizedPage() {
     };
 
     fetchWebsiteContent();
-  }, [id]);
+  }, [platform, product]);
 
   return (
     <>
@@ -52,17 +55,17 @@ export default function PersonalizedPage() {
               <h1 className="text-xl font-bold">Generating Content...</h1>
             ) : data ? (
               <>
-                {/* ✅ Headline as h1 (No "Headline:" prefix) */}
+                {/* ✅ Headline as h1 */}
                 <h1 className="text-2xl font-bold text-blue-600">{data.headline}</h1>
 
-                {/* ✅ Description (No "Description:" prefix) */}
+                {/* ✅ Description */}
                 <p className="mt-2 text-gray-600">{data.description}</p>
 
                 {/* ✅ Image */}
-                <img src={data.image} alt={id} className="mt-4 w-full max-w-md rounded-lg shadow" />
+                <img src={data.image} alt={product} className="mt-4 w-full max-w-md rounded-lg shadow" />
 
                 {/* ✅ Generate New Button */}
-                <Button className="mt-4" onClick={() => window.location.href = "/personalized"}>
+                <Button className="mt-4" onClick={() => window.location.href = "/"}>
                   Generate New
                 </Button>
               </>
