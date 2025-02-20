@@ -1,5 +1,1 @@
-{
-  "/api/generate/route": "app/api/generate/route.js",
-  "/personalized/[platform]/[product]/page": "app/personalized/[platform]/[product]/page.js",
-  "/page": "app/page.js"
-}
+{}
