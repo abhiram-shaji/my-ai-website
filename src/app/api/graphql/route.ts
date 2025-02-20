@@ -25,7 +25,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     ads: () => ads,
-    ad: (_parent: any, args: { id: string }) => ads.find((ad) => ad.id === args.id),
+    ad: (_parent: unknown, args: { id: string }) => ads.find((ad) => ad.id === args.id),
   },
 };
 

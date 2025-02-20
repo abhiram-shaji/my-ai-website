@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Head from "next/head";
+import Image from "next/image";
+
 
 export default function PersonalizedPage() {
   const { platform, product } = useParams() as { platform: string; product: string };
@@ -24,7 +26,7 @@ export default function PersonalizedPage() {
 
       const result = await response.json();
 
-      // ✅ THE FINAL CLEANUP FUNCTION - Strips EVERYTHING Unwanted
+      // THE FINAL CLEANUP FUNCTION - Strips EVERYTHING Unwanted
       const cleanText = (text: string) =>
         text
           ?.replace(/^(Website Title:|Headline:|Description:)\s*/i, "") // Remove AI prefixes
@@ -58,16 +60,24 @@ export default function PersonalizedPage() {
               <h1 className="text-xl font-bold">Generating Content...</h1>
             ) : data ? (
               <>
-                {/* ✅ 100% CLEAN Headline */}
+                {/* 100% CLEAN Headline */}
                 <h1 className="text-2xl font-bold text-blue-600">{data.headline}</h1>
 
-                {/* ✅ 100% CLEAN Description */}
+                {/* 100% CLEAN Description */}
                 <p className="mt-2 text-gray-600">{data.description}</p>
 
-                {/* ✅ Image */}
-                <img src={data.image} alt={product} className="mt-4 w-full max-w-md rounded-lg shadow" />
+                {/* Image */}
+                <Image 
+  src={data.image} 
+  alt={product} 
+  width={600} 
+  height={400} 
+  className="mt-4 w-full max-w-md rounded-lg shadow" 
+  priority
+/>
 
-                {/* ✅ Generate New Button */}
+
+                {/* Generate New Button */}
                 <Button className="mt-4" onClick={() => window.location.href = "/"}>
                   Generate New
                 </Button>
